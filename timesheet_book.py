@@ -3,6 +3,7 @@ from styles import set_header_doc_style, set_doc_style, set_margins, set_assign_
 from docx.shared import Cm, Pt
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 from time_sheet import TimeSheet
+from calendar_util import CalendarUtil
 
 
 HEADER_TEXT = """ESTADO DO PARÁ
@@ -25,9 +26,12 @@ EMEF. Dulcinéia Almeida do Nascimento
 """
 
 class Book:
-    def __init__(self, employees,filename='Livro de Ponto.docx'):
+    def __init__(self, employees, month):
         self.doc = Document()
         self.employees = employees
+
+        self.month = CalendarUtil().months.index(month) + 1
+        print('month', self.month)
         
         set_doc_style(self.doc)
         set_margins(self.doc)
@@ -147,7 +151,8 @@ class Book:
             self.doc,
             institution,
             title,
-            employee
+            employee,
+            self.month
         )
         
         self.doc.add_paragraph()
@@ -162,8 +167,8 @@ class Book:
             self.build_occurrence_page(e)
             self.doc.add_page_break()
 
-    def save(self):
-        self.doc.save('livro de ponto.docx')
+    def save(self, path):
+        self.doc.save(path)
 
 
 

@@ -7,11 +7,12 @@ from datetime import datetime
 
 
 class TimeSheet:
-    def __init__(self, document, institution, title, employee):
+    def __init__(self, document, institution, title, employee, month):
         self.institution = institution
         self.title = title
         self.employee = employee
         self.document = document
+        self.month = month
 
         self.table = self.build_table()
         self.build_table_header()
@@ -19,7 +20,7 @@ class TimeSheet:
         self.build_footer()
 
     def build_table(self):
-        calendar = CalendarUtil()
+        calendar = CalendarUtil(month=self.month)
 
         header_rows_num = 2
         header_values_row_num = 2
@@ -111,7 +112,7 @@ class TimeSheet:
             run = par.add_run(f'{data[1]}')
         
     def build_table_header(self):
-        calendar = CalendarUtil()
+        calendar = CalendarUtil(month=self.month)
         none_value = '_________________'
 
         title_row = self.table.rows[0]
@@ -134,7 +135,7 @@ class TimeSheet:
             header_row.paragraphs[-1],
             (
                 ('\nMatrícula: ', none_value if self.employee['Matrícula'] == '' else self.employee['Matrícula']),
-                ('Mês/Ano: ', f'{calendar.months[datetime.today().month-1]}/{datetime.today().year}'),
+                ('Mês/Ano: ', f'{calendar.months[self.month-1]}/{datetime.today().year}'),
                 ('Situação Funcional: ', f'{self.employee["Situação"]}')
             )
         )
@@ -150,12 +151,12 @@ class TimeSheet:
         self.add_header_text()
 
     def build_body(self):
-        days = CalendarUtil().get_current_month_range()
+        days = CalendarUtil(month=self.month).get_current_month_range()
 
         for day, row in zip(days, self.table.rows[4:-1]):
             row.cells[0].paragraphs[-1].text = str(day)
 
-            weekday = CalendarUtil().get_weekday(day)
+            weekday = CalendarUtil(month=self.month).get_weekday(day)
             if weekday[1] == 'Sábado' or weekday[1] == 'Domingo':
                 cells = row.cells[1:]
                 cell_index = 0
