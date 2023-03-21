@@ -5,7 +5,7 @@ from tkinter.filedialog import askopenfilename
 
 class EmployeesLoader:
     def __init__(self, path):
-        self.employees = pd.read_excel(path, dtype={'Telefone': object})
+        self.employees = pd.read_excel(path, dtype={'Telefone': object, 'Turnos': str})
         self.employees.fillna('', inplace=True)
 
     def df2Dict(self):
@@ -29,12 +29,10 @@ class EmployeesLoader:
         return dict_employees
 
 if __name__ == "__main__":
-    # print(pd.read_excel('teste.xlsx'))
-    # exit()
     fn = askopenfilename()
     print("user chose", fn)
     loader = EmployeesLoader(fn)
-    employees = loader.df2Dict()
+    employees = loader.df2Dict()    
     book = Book(employees,)
     book.build_pages()
     book.save()
